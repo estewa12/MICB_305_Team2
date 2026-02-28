@@ -1,6 +1,7 @@
 # Team Meeting Agendas 
 
 **Times/Dates:** Mondays at 3:00PM 
+
 **Expected Attendees:** Claire Sie (TA), Emma Steward, Lucy Perkins, Griffin Mawson, Ashleigh Wood, Chloe Saar
 
 
