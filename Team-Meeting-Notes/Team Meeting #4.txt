@@ -1,0 +1,81 @@
+﻿305 Team Meeting #4 Agenda - 3:00PM Monday February 2nd, 2026
+
+
+Meeting Objectives:
+* Reflect on Assignment 1
+* Next steps on the project
+* Clarify other questions regarding Github and this week’s modules
+
+
+Group Assignment 1: Submitted yay!
+
+
+Project:
+* What are the next (first) steps?
+   * Would be great to get a bit of an overview of what each step of the project looks like and make a rough timeline of what we have to do and when
+
+
+GitHub:
+* Linked to R and downloaded 305 repo - what to do now?
+* Do we make a new repo for the project?
+   * If so, how do we do this?
+      * Yes - call whatever we want
+      * Share with group + TA
+   * How do you import the datasets into a new repo?        
+      * Probably don’t need to upload raw data - just link
+   * How to add collaborators
+      * For meeting agenda/notes, do we just upload them there from now on or should we also email?
+         * Upload as file to Github (txt, pdf, word doc, etc)
+
+
+This week’s modules:
+* Do we need to picrust? Could we just do this in R?
+   * No need to picrust
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Meeting Minutes: 
+
+
+* Github desktop 
+* Could put a PDF to github
+
+
+To do: 
+First three papers- new summary 
+No truncation moving forward? 
+Overrarifying data affects downstream reading– rarify less?
+Look at the depths other papers chose to do.

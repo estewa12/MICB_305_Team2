@@ -1,0 +1,48 @@
+﻿305 Team Meeting #5 Agenda - 3:00PM Monday February 8th, 2026
+
+
+Meeting Objectives:
+* No statistical difference between farm living and age of onset
+* Delegate out who's doing what for assignment 2
+* Discuss how to navigate Github (our repository) - making folders etc 
+   * How to organize our repository and what files to include
+
+
+
+
+Meeting Notes: 
+* No optional meeting over reading break
+* No statistical difference between farm living and age of onset → not a big deal, we will also compare to the microbiome composition 
+   * Microbiome data = zero inflated data 
+   * Bunch of different taxa where counts for some samples = 0 
+      * A lot of stat tests try to fit data so it works
+* Include the feature and taxonomy tables in the Assignment 5 submission
+* Microbiome analyses:
+   * Most are taxonomic based: presence/abundance of microbial species
+   * Picrust: we know certain taxa have certain metabolic functions, use taxonomic identity to predict metabolic potential 
+
+
+Assignment 2: 
+* We are not expected to run all analyses listed on the assignment 
+* Different analytical steps to try and answer the research question
+   * Expecting to have between 2-4 research aims 
+      * Big research question: farm living affecting microbiome associated with PD onset 
+   * Break down big RQ into achievable aims 
+      * Aim: builds on itself 
+      * Aim 1: does farm living affect alpha beta microbiome diversity 
+      * Aim 2: are there microbes associated with farm living (differential abundance)
+      * Aim 3: predicted functional changes in the microbiome (picrust) 
+      * Aim 4: we have identified differentially different microbes can we take these markers and predict age of onset. 
+      * Look at UJEMI PAPERS
+   * What info can we get from each different analysis and how can it address some of the aims?
+
+
+Each come up with an aim and then figure out which data analyses for each aim?
+* Keep in mind potential figures we can generate from each analyses and how this would fit into our paper.
+NO DEFAULT R COLOURS
+
+
+Suggestions for GitHub
+* How do we organize it to make a new folder for notes and agendas
+* Use backslash to create folders on Github 
+   * Emma created a Markdown file for readability (thank you Emma!)

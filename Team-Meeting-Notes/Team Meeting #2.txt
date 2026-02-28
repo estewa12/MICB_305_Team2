@@ -1,0 +1,61 @@
+﻿305 Team Meeting #2 Agenda - 3:00PM Monday January 19th, 2026
+
+
+Meeting Objectives:
+* Confirm research question and develop a plan for starting the project
+
+
+Potential Research Questions
+* Parkinson's Dataset - Farm Living vs Urban Living
+   * More detailed research question: How does living on a farm impact the gut microbiome and how do these changes map to the age of onset of Parkinson’s disease
+      * Variables of interest: Disease (Control vs PD), Age_onset, 16S data 
+   * We would hypothesize that living on a farm is correlated with earlier onset of Parkinson’s disease, and that this difference is mediated by differences in gut microbiome composition
+   * Discuss this paper: 10.1590/s0004-282x1996000100006
+      * Urban vs Rural differences in age of onset of Parkinson’s disease - found age onset is higher for rural group - did not look at microbiome at all, small sample size, older, and included individuals living near a farm outside of a city in the rural group  
+   * This seemed to be the most popular topic discussed during last week’s meeting, but we need to find a way to make it microbiome-centered and incorporate the 16S sequencing data.
+* Multiple Sclerosis Dataset - Microbiome Diversity Changes with Duration of Illness
+   * This project would look at how the gut microbiome differs in MS patients with varying lengths of disease duration. Multiple diversity metrics would be used - to be determined later if selected
+   * Preliminary literature search completed - see link to table below
+      * MICB 305 Lit Search
+* IBS Dataset - Gut Microbiome and Intestinal Inflammation
+   * Do changes in the gut microbiome happen before intestinal inflammation flares, or only after inflammation begins?
+   * It was noted last meeting that this idea could be slightly complex due to the intestinal inflammation flares not being distinctly before or after gut microbiome changes, and the direction of causation is not clear. We could try to refine this question a bit so that the project is more straightforward if we want to do the IBS dataset.
+* Dysautonomia dataset–
+   * We could also look into investigating whether dysautonomia severity is associated with a mismatch between body weight and gut transit time, and whether this physiological mismatch corresponds to distinct gut microbiome profiles (looking at alpha v beta diversity in the microbiome profiles)
+      * Physiological conditions, body weight and gastrointestinal transit time are expected to show a coordinated relationship reflecting balanced metabolic regulation and gut motility. In dysautonomia, however, autonomic dysfunction may disrupt this coordination, resulting in atypical combinations such as normal body weight with markedly delayed or accelerated transit time. 
+   * We could look at whether shifts in gut microbiome composition (compared to control) of patients with dysautonomia occur gradually with dysautonomia severity or whether they appear only after a threshold of autonomic dysfunction is reached– 
+
+
+
+
+Meeting Minutes 
+
+
+Farm living changes microbiome and microbiome affects age of onset
+
+
+Project Mapping: 
+1. Filter out controls and people who haven't lived on the farm 
+2. Which microbes are associated with farm living 
+3. Predict if its earlier or late onset with that set of onset (using random forest)
+4. Establish a group of microbes that are interesting 
+
+
+
+
+What microbes are associated with farm living 
+* Farm living associated with changes in the microbiome 
+* Which are associated and does it match with the literature 
+
+
+Of Microbes of interest 
+* Are these microbes of interest relevant to Parkinson’s and are they associated to changes 
+
+
+RQ: Do microbes that are associated with farm living correlate to age of onset in Parkinson's disease?
+* Random forest model to predict age of onset based on microorganisms present
+
+
+Next Steps:
+Start to run this through the Qiime pipeline: 
+* Functional analysis

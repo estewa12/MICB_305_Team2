@@ -1,0 +1,44 @@
+﻿305 Team Meeting #3 Agenda - 3:00PM Monday January 26th, 2026
+
+
+Meeting Objectives:
+* Confirm delegation of tasks for group assignment 1
+
+
+Group Assignment 1:
+* Part 1B - where can I find how they classified “farm living”
+   * Is it a certain amount of time (ex. 1 year)?
+   * Avril mentioned there were people adding comments about this when the data was collected, but I can’t seem to find them in the article or supplemental material.
+* Part 1B - how are we defining the microbial composition for this project? 
+   * Are we looking at individual microbes present?
+   * Differences in diversity?
+   * Lack of certain common species of microbes?
+   * Data analysis - how to perform 
+
+
+
+
+Meeting Minutes:
+
+
+Farm living - categorical yes/no, not much more info in metadata but Claire will follow up with Avril to ask
+
+
+For the research questions: Using specific microbes as markers
+
+
+Part 1 of question: does farm living in PD alter microbiota comp? (find farm living associated microbes) 
+
+
+Part 2: are these farm associated microbes (microbial families/genera) correlated with PD age of onset?
+
+
+Before next meeting: 
+Figure out how many controls you have if u subset them by groups
+
+
+How to train your own classifier?   
+Need to find in paper– 
+In methods- microbiome sequencing and analysis 
+The bacterial 16S was ampliiffed using —----primers 
+Look in table S1

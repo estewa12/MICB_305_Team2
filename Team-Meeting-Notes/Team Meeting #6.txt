@@ -1,0 +1,63 @@
+﻿305 Team Meeting #6 Agenda - 3:00PM Monday February 23rd, 2026
+
+
+Meeting Objectives:
+* Discuss completed group assignment 2 – whether anything should be added and how we should go forward on the project proposal
+* Begin delegating tasks for analyses 
+   * Delegate different aims for different group members 
+* Discuss assignment 6 plan 
+   * We are doing both functional analysis and Random Forest modelling for our final project – should a few of us do each of these
+* Discuss upcoming proposal 
+
+
+
+
+Meeting Notes: 
+* No need to run the core microbiome analysis
+   * Consider not doing this 
+* No need to run the indicator species analysis either 
+   * Wasn’t really mentioned in the aims – we mention differential abundance analysis in number 2 
+   * Did not mention indicator taxa 
+   * Accomplish similar things – indicator weigh taxa present in one group but absent in another more strongly 
+   * The way most peel show indicator species is a table – show stat value and p-value 
+   * With differential abundance analysis – this is represented a little differently
+      * Most groups will do like a volcano plot with x axis log 2 fold change and y the log adjusted p value 
+   * You’ll often see boxplots
+   * Many ways to show differential abundance visually 
+
+
+* Run both differential abundance and indicator taxa 
+* Overall: aims are good – all build on each other 
+   * Really liked how for each aim, you added something on figures you could do for each aims 
+   * One thing to be careful of – language when describing biological conclusions of analyses
+   * In aim 2 – language may be a bit too strong
+      * Maybe use a bit more conservative language 
+      * In aim 2 we mention use of a boxplot for differentially abundant 
+         * Volcano plot could be interesting here showing log 2 fold change and log p value 
+   * For aim 3: key distinction here is it isn’t PICRUSt2 to predict the functional differences, but actually mazlin
+* One thing that could add to our study in particular:         
+   * Ideitify microbial pathways that are involved in neuroactive compounds 
+   * R package you can download and you can run on picrust predicted tables 
+* Figure to choose would be a stacked barplots – can give you better idea of what kind of figure you would use with this data 
+* Aim 4 makes a lot of sense – logical last step 
+
+
+Think about choosing a deeper refraction depth– rarefy philoseq options in R to new refraction depths.
+
+
+Action Items:
+1. Re-run Qiime to undo truncation length– denoising step – re-assign taxonomy etc…
+2. Alpha beta diversity after filtering out non PD samples 
+3. Run picrust in QIIME
+
+
+* Done before next meeting: proposal due in two weeks: 
+   * Start on introduction and background section of proposal– rough draft of organization
+   * For intro and background
+      * Start with a good review article. To cite information cite the primary study not the review study.
+   * Talk about Parkinson's and microbiome, Parkinson’s and farm living, and microbiome and farm living
+      * Try to connect all the points
+* More strict on wording and structuring. 
+* Ashleigh + Emma: Alpha and Beta diversity plots
+* Lucy + Emma: Random Forest assignment option
+* Ashleigh, Chloe, + Griffin functional analysis assignment option
