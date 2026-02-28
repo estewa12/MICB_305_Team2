@@ -1,0 +1,227 @@
+##### All of the following code was ran within the MICB305 class server 
+
+#### Set up
+# Create a directory where the outputs from the QIIME2 pipeline will be saved to 
+cd ../work/
+mkdir pd
+cd pd
+
+# Import and demultiplex using a manifest
+qiime tools import \
+  --type "SampleData[SequencesWithQuality]" \
+  --input-format SingleEndFastqManifestPhred33V2 \
+  --input-path /datasets/work/pd
+  --output-path demux_seqs.qza
+
+# Create visualization of demultiplexed samples
+qiime demux summarize \
+  --i-data demux_seqs.qza \
+  --o-visualization demux.qzv
+
+# File transfer onto local device to visualize the .qzv file using qiime2view (password required)
+scp root@10.34.36.89:/work/pd/demux_seqs.qzv
+
+
+
+##### Denoising sequences and clustering reads into ASVs using DADA2
+
+qiime dada2 denoise-single \
+  --i-demultiplexed-seqs demux_seqs.qza \
+  --p-trim-left 0 \
+  --p-trunc-len 251 \
+  --o-representative-sequences rep-seqs.qza \
+  --o-table table.qza \
+  --o-denoising-stats stats.qza
+
+# Visualize DADA2 stats
+qiime metadata tabulate \
+  --m-input-file stats.qza \
+  --o-visualization stats.qzv
+
+# Visualize ASVs stats
+qiime feature-table summarize \
+  --i-table table.qza \
+  --o-visualization table.qzv \
+  --m-sample-metadata-file /datasets/project_2/parkinsons/parkinsons_metadata.txt
+  
+qiime feature-table tabulate-seqs \
+  --i-data rep-seqs.qza \
+  --o-visualization rep-seqs.qzv
+
+# Transfer files to computer to visualize
+scp root@10.34.36.89:/data/pd/table.qzv .
+scp root@10.34.36.89:/data/pd/rep-seqs .
+scp root@10.34.36.89:/data/pd/stats.qzv .
+
+
+
+
+#### Training Classifier and Taxonomy Barplot
+ 
+qiime feature-classifier extract-reads \
+  --i-sequences /datasets/silva_ref_files/silva-138-99-seqs.qza \
+  --p-f-primer GTGCCAGCMGCCGCGGTAA \
+  --p-r-primer GGACTACHVHHHTWTCTAAT \
+  --p-trunc-len 251 \
+  --o-reads ref-seqs-trimmed.qza 
+
+# Annotate taxonomy with your new trimmed classifier (ref-seqs-trimmed.qza)
+qiime feature-classifier fit-classifier-naive-bayes \
+  --i-reference-reads ref-seqs-trimmed.qza \
+  --i-reference-taxonomy /datasets/silva_ref_files/silva-138-99-tax.qza \
+  --o-classifier classifier.qza
+
+# Use the trained classifier to assign taxonomy to your reads (rep-seqs.qza)
+qiime feature-classifier classify-sklearn \
+  --i-classifier classifier.qza \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy.qza
+
+# Visualizing taxonomy
+qiime metadata tabulate \
+  --m-input-file taxonomy.qza \
+  --o-visualization taxonomy.qzv
+
+# Creating a taxonomy barplot
+# Taxonomy barplots
+qiime taxa barplot \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file /datasets/project_2/parkinsons/parkinsons_metadata.txt \
+  --o-visualization taxa-bar-plots.qzv
+
+# Transferring the outputs from the server to local device
+scp root@10.34.36.89:/work/pd/taxonomy.qzv .
+scp root@10.34.36.89:/work/pd/taxa-bar-plots.qzv .
+
+
+
+
+#### Filtering, Tree Generation, and Generating Alpha Rarefaction Curve
+
+# Filtering out mitochondria and chloroplasts 
+qiime taxa filter-table \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table table-no-mitochondria-no-chloroplast.qza
+
+qiime feature-table summarize \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --o-visualization table-no-mitochondria-no-chloroplast.qzv \
+  --m-sample-metadata-file /datasets/project_2/parkinsons/parkinsons_metadata.txt 
+
+# Will not be doing any taxonomy-based, sample-based, or metadata-based filtering in qiime2
+# This filtering will be performed in R in case they are needed for downstream analyses 
+
+# Generating a tree for phylogenetic diversity analyses 
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-masked-alignment masked-aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza 
+
+# Generating an alpha-rarefaction curve plot
+# Max depth set to 20000 (only a few samples higher than this)
+qiime diversity alpha-rarefaction \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --i-phylogeny rooted-tree.qza \
+  --p-max-depth 20000 \
+  --m-metadata-file /datasets/project_2/parkinsons/parkinsons_metadata.txt \
+  --o-visualization alpha-rarefaction.qzv 
+
+# Export alpha-rarefaction curve and table to local device
+scp root@10.34.36.89:/work/pd/alpha-rarefaction.qzv .
+scp root@10.34.36.89:/work/pd/table-no-mitochondria-no-chloroplast.qzv .
+
+# Based on the alpha-rarefaction curve and the table.qzv file, a sampling depth of 5103
+# At this depth we retain 98.33% of samples (295/300)and 41.28% of features
+
+
+
+
+
+#### PICRUSt2 analysis - functional analysis 
+
+# Filter the table.qza file to remove features with 5 or fewer total counts (speeds up picrust)
+qiime feature-table filter-features \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --p-min-frequency 5 \
+  --o-filtered-table feature-frequency-filtered-table.qza
+
+# Convert data to picrust-friendly format
+mkdir picrust
+
+qiime tools export \
+   --input-path feature-frequency-filtered-table.qza \
+   --output-path picrust
+
+qiime tools export \
+   --input-path rep-seqs.qza \
+   --output-path picrust
+
+# Switch to the PICRUSt2 environment 
+conda deactivate
+conda activate picrust2
+
+# Run the PICRUSt2 analysis (ran in detached screen) 
+screen -S picrust
+
+picrust2_pipeline.py \
+   -s dna-sequences.fasta \
+   -i feature-table.biom \
+   -o picrust_out
+
+
+
+
+#### Making the files human readable and exporting 
+# Creating exports file (within the pd file)
+mkdir exports
+
+#Converting table.qza file to txt file and putting in exports file
+qiime tools export \
+--input-path table.qza \
+--output-path . 
+
+biom convert \
+-i feature-table.biom \
+--to-tsv \
+-o exports/feature-table.txt
+
+# Exporting taxonomy.qza to a tsv file and putting in exports folder
+qiime tools export \
+--input-path taxonomy.qza \
+--output-path exports
+
+# Exporting the rooted-tree.qza file 
+qiime tools export \
+--input-path rooted-tree.qza \
+--output-path exports
+
+# Changing the picrust files to .tsv (while in picrust_out folder)
+gunzip combined_EC_predicted.tsv.gz
+gunzip combined_KO_predicted.tsv.gz
+gunzip pathways_out/path_abun_unstrat.tsv
+
+# Moving combined_EC and combined_KO files to the exports file
+mv picrust/picrust_out/*.tsv exports/
+mv picrust/picrust_out/pathways_out/path_abun_unstrat.tsv exports/
+
+# Exporting the exports file onto local device
+scp root@10.34.36.89:/work/pd/exports .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
