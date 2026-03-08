@@ -1,0 +1,64 @@
+﻿305 Team Meeting #7 Agenda - 3:00PM Monday March 2nd, 2026
+
+
+Meeting Objectives:
+* Answer any questions regarding the introduction and background section of the proposal
+* How do we "push" R files into GitHub?
+* Assign the rest of the project proposal parts to each group member
+* Set goals for upcoming week
+
+
+GitHub:
+* Should we be uploading group assignment 1+2 and the proposal to GitHub, or only meeting minutes and analyses?
+* Updated structure a bit for meeting minutes and agendas - does this seem okay?
+
+
+Proposal:
+* Is it possible to have group assignment 2 returned before the proposal deadline so we can implement feedback? I think we got most of it last time but just in case there is anything we missed
+* Delegation of tasks in participation report - feel free to add anything from the “options” tab to your name if you want to take it on
+   * Is everyone happy with the way we tentatively split the analyses?
+* Hypothesis vs Prediction question - is this an exploratory project?
+
+
+Meeting Notes: 
+* Check module videos to see how to push R files into GitHub
+* In first paragraph and intro,  mention gut, parkinsons, keep the info about GI dysfunction, go over features of microbiome, functional significance of Parkinson’s 
+* Strongest way to end intro/background part is talking about the gap in the research
+   * What is the missing piece our study is aiming to fill – this will lead us into next section 
+* Hypothesis and prediction – used interchangeably
+   * Becomes more of a prediction – hypothesis is more structured
+   * Final sentence of hypothesis might be a tad more speculative – the link between microbiota and farm living and parkinsonism is not super well explored 
+      * We could leave that part out
+   * Try reframing this sentence to make it less concrete – say that this will be more correlated 
+* Should we used rarefied dataset for all analyses 
+   * The only analyses that we HAVE to rarefy for is diversity analysis 
+   * This is the only section where differences in sequencing depth really affects it – samples sequenced to further depth are more likely to have more sequences
+   * You can end up losing a lot of low abundance features – for some thins that can be fine – if they are lowly abundant they may not be super important… but there may be cases where things will be important 
+* Just rarefy for the diversity column 
+   * You can run all later analyses on rarefied data… but would then need to rationalize it 
+* References 
+   * Looking for ASM style 
+   * Zotero has ASM style – can convert all sources to that style 
+      * No need to cite zotero
+* Try to format from more general to more specific 
+* Can still mention inflammation in the introduction
+   * We were interested in neurometabolite production 
+   * The paper also mentioned the microbiome producing amino acid metabolites – highlight this in the intro as well 
+* For alpha diversity – you can test for homoscetasticity and parametricity if you want to use a parametric test, but given that our results look similar 
+   * When looking at diversity there may not be any significant overall shifts, but there may be differences in specific tests  
+* Alpha and beta diversity tests for PD vs. healthy control looking if they lived on farm or not
+* If you find nothing significant you can blame it on the farm living metadata – future studies should focus more on length of stay in farm/be more specific  
+* Don't assume the reader understand– air on the side of overexplaining vs under explaining 
+* Make sure your explaining the proposal well and understand rational behind research topic. 
+* Focus on being very clear and concise 
+* No run on sentences 
+* Why are you doing this– how are you doing this– knowing that you understand– explaining that in text making sure to explain that. 
+
+
+Add final plots on github
+
+
+
+
+Introduction and Background 
+*
