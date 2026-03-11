@@ -1,0 +1,74 @@
+M305 Team Meeting #8 Agenda - 3:00PM Monday March 9th, 2026
+
+
+Meeting Objectives:
+* Review proposal draft + debrief
+   * MICB 305 Proposal.docx
+* Confirm timeline for project moving forward
+* Answer any questions that came up over the past week
+
+
+Assignment 6:
+* Is there an estimated timeline for the return of assignment 6? I was hoping to use my figure from that one for assignment 7
+
+
+Random Forest Challenges (Lucy):
+* To get ROC curves and AUC values etc random forest needs a categorical outcome instead of numerical - age of onset is numerical
+   * Possible solution - group age of onset into “later onset” and “earlier onset” to make it categorical - thoughts on this?
+* All the results from the assignment so far point to there being no significant taxa associated with farm living - cannot do a random forest if there are no predictors
+   * Possible solutions:
+   * Should we just try to run a general random forest with all the taxa to see if genera can predict age of onset? 
+      * If we want to stay true to our original aims, we can try to do the significant taxa if there are any and pivot to all taxa if there aren’t and just mention that in the manuscript
+   * Should we scrap the age of onset part and just try to see if genera can predict farm living status in PD patients?
+
+
+Proposed Approach Section of Proposal (Lucy):
+* Is a Wilcoxon test best for alpha diversity?
+* How many permutations for PERMANOVA for beta diversity is best?
+* How many permutations for indicator taxa?
+* Age of onset grouping - what should be our threshold?
+* Benjamini–Hochberg for differential abundance?
+
+
+Hypothesis Section of the Proposal (Griffin)
+* Should some of the research in this question be reiterated – to make logic clear I included some information related to our hypothesis, but some is sort of restatements from intro
+
+
+Reference Section of Proposal (Ashleigh)
+* Formatting RStudio/CRAN references
+* RStudio reference
+
+
+Analysis Plans:
+* Does it make sense to have one person initially filter the data / make the phyloseq object and upload so that we can all use it for our analyses?
+   * Can someone else take one of the analyses? I dont think i can run three lol (-Emma)
+
+
+Meeting Minutes:
+* Since it looks like we don’t have predictors – we could see if there’s a significant taxa, but if there’s no significant taxa we could use all taxa
+* Or we could get rid of age of onset, and see if we could predict farm-living status 
+* If we are married to the idea of age onset we could find other things to predict 
+* Most of the taxa don’t meet cutoff for P-value or stat value – how far are they from these cutoffs 
+   * Do the predictions off the genus, and possibly the family level – instead of glomming to the genus, you can also try to family level 
+
+
+Threshold for our data age onset cutoffs
+* Look into the literature to see what other people report average age of onset and see how that compares to the median in our diagram 
+
+
+Upload Phyloseq object to Github
+
+
+References and Formatting
+* Random Forest and CRAN 
+* Package 19 – if package has a paper associated with them you can cite the paper 
+* You need to cite R or RStudio – reference also isn’t RStudio 
+
+
+There is a paper for RF
+
+
+One of our references is WHO fact sheet – it’s not like we’re on Wikipedia – WHO is a fine organization to go off of 
+
+
+* We will send our proposal tonight to Claire –
