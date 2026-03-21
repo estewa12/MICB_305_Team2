@@ -1,0 +1,216 @@
+---
+title: "Random Forest"
+author: "Lucy Perkins"
+date: "2026-03-21"
+output: html_document
+---
+# Part 1: Load Libraries and Data
+
+```{r Load Libraries and Data}
+# Load necessary libraries
+library(randomForest)
+library(caret)
+library(ranger)
+library(pROC)
+library(boot)
+library(ggplot2)
+library(phyloseq)
+library(tidyverse)
+
+# Load the dataset
+ps = readRDS('phyloseq_taxonomy.rds')
+```
+
+# Part 2: Prep Data for Random Forest
+
+```{r Prep Data}
+# Aggregate reads to the Genus level
+ps <- tax_glom(ps, "Genus")
+
+# CLR transform
+ps_clr <- microbiome::transform(ps, "clr")
+
+# Melt to long format
+df <- psmelt(ps_clr)
+
+# Create onset groups
+df <- df %>%
+  mutate(
+    Onset_group = case_when(
+      Age_onset >= 60 ~ "Later_Onset",
+      Age_onset < 60 ~ "Earlier_Onset")
+    )
+
+# Remove missing values for key variables
+df <- df %>%
+  filter(!is.na(Onset_group), !is.na(Genus))
+
+# Z-transform abundance within each genus
+df_transformed <- df %>%
+  group_by(Genus) %>%
+  mutate(Abundance = as.numeric(scale(Abundance))) %>%
+  ungroup()
+
+# Summarize so each Sample x Genus has only one value
+df_summarized <- df_transformed %>%
+  group_by(Sample, Onset_group, Genus) %>%
+  summarise(Abundance = mean(Abundance), .groups = "drop")
+
+# Pivot to wide format
+df_pivot <- df_summarized %>%
+  pivot_wider(names_from = Genus, values_from = Abundance)
+
+# Final dataframe
+df_final <- df_pivot %>%
+  select(-Sample) %>%
+  mutate(Onset_group = factor(Onset_group))
+
+```
+
+# Part 3: Set up RF
+
+Start by separating the data into predictors (taxa) and outcome (onset group)
+
+```{r predictors_and_outcome}
+# Set predictors as taxa
+predictors <- df_final %>% select(-Onset_group)
+
+# Set outcome as onset group factor
+outcome <- df_final %>% 
+  pull(Onset_group) %>% 
+  factor(levels = c("Earlier_Onset", "Later_Onset"))
+```
+
+Next, set up the k-fold cross-validation with k = 10
+
+```{r cross-validation}
+# Randomly subset the rows into k equal bins
+k <- 10
+set.seed(421)
+folds <- createFolds(outcome, k = k, list = TRUE)
+
+# Each of these folds will take a turn being the test dataset
+str(folds)
+
+```
+
+Finally, set up hyperparameter tuning
+
+```{r hyperparamater tuning}
+# Set parameters for tuning
+tune_grid <- expand.grid(
+  mtry = c(5, 10, 20, 30),
+  splitrule = "gini",
+  min.node.size = c(5, 10, 20, 50))
+
+```
+
+# Part 4: Run RF
+
+Use given run_rf function using source command and examine the output
+
+```{r run_rf}
+source('randomforest_functions.R')
+
+pd_model = run_rf(X = predictors, y = outcome, 
+                  fold_list = folds,
+                  hyper = tune_grid, 
+                  rngseed = 421)
+
+names(pd_model)
+```
+
+# Part 5: Interpret Results
+
+First, generate ROC curve to interpret results
+
+```{r ROC curve}
+# Calculate ROC curve points from RF output
+roc_test = roc(pd_model$test_labels$true_labels,
+               pd_model$test_labels$predicted_probabilities)
+roc_train = roc(pd_model$train_labels$true_labels,
+                pd_model$train_labels$predicted_probabilities)
+
+# True positive rate = sensitivity
+# False positive rate = 1-specificity
+plot_roc <- ggplot() +
+  # Training data
+  geom_line(aes(x = 1 - roc_train$specificities, 
+                y = roc_train$sensitivities), 
+            color = "red", linewidth = 1) +
+  # Test data
+  geom_line(aes(x = 1 - roc_test$specificities,
+                y = roc_test$sensitivities), 
+            color = "black", linewidth = 1) +
+  geom_abline(slope = 1, intercept = 0, color = "gray", linetype = "dashed", linewidth = 1) +
+  labs(x = "False Positive Rate", y = "True Positive Rate") +
+  annotate(
+    "text",
+    x = 0.7,
+    y = 0.2,
+    label = sprintf(
+      "Train (red): %.2f (%.2f-%.2f)\nTest (black): %.2f (%.2f-%.2f)",
+      pd_model$auc_train, pd_model$auc_train_ci[1], pd_model$auc_train_ci[2],
+      pd_model$auc_test, pd_model$auc_test_ci[1], pd_model$auc_test_ci[2]
+    ),
+    size = 7
+  ) +
+  theme_minimal(base_size = 20)
+
+ggsave(
+  filename = "roc_curve.png",
+  plot = plot_roc,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
+```
+Next, compile the results into a table
+```{r results table}
+roc_data <- data.frame(
+  Dataset = "RF Age of Onset Model",
+  Training_AUC = round(pd_model$auc_train, 2),
+  Training_AUC_CI = paste0(
+    round(pd_model$auc_train_ci[1], 2), "-",
+    round(pd_model$auc_train_ci[2], 2)
+  ),
+  Testing_AUC = round(pd_model$auc_test, 2),
+  Testing_AUC_CI = paste0(
+    round(pd_model$auc_test_ci[1], 2), "-",
+    round(pd_model$auc_test_ci[2], 2)
+  )
+)
+
+roc_data
+```
+Finally, plot the importance values of each predictor
+
+```{r importance values}
+# Plot only the top 20 most important genera
+plot_importance <- pd_model$importance %>%
+  slice_max(order_by = MeanDecreaseGini, n = 20) %>%
+  arrange(MeanDecreaseGini) %>%
+  mutate(Feature = factor(Feature, levels = Feature)) %>%
+  ggplot(aes(x = Feature, y = MeanDecreaseGini, fill = MeanDecreaseGini)) +
+  geom_col() +
+  coord_flip() +
+  theme_classic(base_size = 18) +
+  theme(
+    axis.text.y = element_text(size = 11),
+    axis.text.x = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  ) +
+  ylab("Importance (Gini)") +
+  xlab(NULL)
+
+ggsave(
+  filename = "importance_plot.png",
+  plot = plot_importance,
+  width = 10,
+  height = 7,
+  dpi = 300
+)
+```
+
