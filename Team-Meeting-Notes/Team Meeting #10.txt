@@ -1,0 +1,122 @@
+﻿305 Team Meeting #10 Agenda - 3:00PM Monday March 23rd, 2026
+
+
+Meeting Objectives:
+* Review completed analyses (See folder of results in GitHub)
+* Clarify questions surrounding GitHub
+* Make plan for oral presentation
+
+
+GitHub Questions (Lucy):
+* I reorganized the GitHub over the weekend to better match the suggested format from the module videos - does this look okay?
+* Does it matter if our R scripts folder contains files in .Rmd or .R format? I’ve looked through some other UJEMI papers from MICB 475 projects and most use .R format, but for all the assignments we’ve been doing .Rmd files. Which is preferred?
+
+
+Random Forest Analysis (Lucy):
+* I’ve completed the Random Forest analysis and just used all genera as predictors since we didn’t have any differentially abundant or indicator ones. See results on GitHub
+* Do the ROC and importance plots look publication-ready? If not, what should I change about them?
+
+
+Functional Analysis via PICRUSt2 (Griffin):
+* I’ve finished the functional analysis using the KEGG orthology table
+   * The input I used was the pred_metagenome_unstrat.tsv file with KO terms – this was not one of the recommended PICRUSt2 outputs. Is this correct?
+   * I also went through the analysis using the Metacyc data – results for this were not as interesting as the KO ones
+      * The only significant difference between the two groups is MetaCyc PWY-7199, which is pathway for pyrimidine deoxyribonucleoside salvage 
+         * Pathway less abundant in farm-living condition – research has found that aromatic amino acids are lower in PD patients, and we have found  pyrimidine recycling is significantly lower in farm-living condition (might be a reach) 
+* Are my plots up to standard, and which plots to include in manuscript vs which to include in supplementary
+   * From the UJEMI papers I have seen so far, a number show the log2 fold bar plots, with some also including PCA plots
+      * For us, I was thinking including the stacked bar plot from the module, and adding the heatmap and pca plots in the supplemental
+   * For the publication ready stacked bar plot, will we have to remove the “unknown” KEGG pathways? 
+* I had to modify Avril's pathway errorbar fixed function – is this ok? 
+* How to interpret results and how to use them for manuscript
+   * Specifically, deciding whether to include information from both MetaCyc and KEGG results
+
+
+Beta Diversity Analysis (Ashleigh):
+* No significant results 
+
+
+Alpha Diversity and Differential Abundance Analyses (Emma):
+* Differential Abundance: 
+   * No results for differential abundance– adjusted the taxonomic level from genus to family and still no results.
+   * Also lowered prv_cut = 0.05 instead of 1 (10%) 
+      * Only kept taxa that appear in at least 5% of samples 
+      * Dont need as many figures– 
+      * Just include in supplemental information
+         * Include in supplementary data. 
+* Alpha Diversity: 
+   * No significant results unfortunately p-value = 0.35
+
+
+Taxonomy Bar Plots and Indicator Taxa (Chloe):
+* Taxonomy plot formatted as bar plot instead of the stacked one, is this okay  ** add error bars 
+* No significant indicator taxa, just took the top 12? 
+   * Make a bar plot for just one
+   * No table for indicator genera, dont make figure just make table and include in supplemental
+
+
+Oral Presentation Slides:
+* We set a goal last week to work on the slides this week and have a draft ready for next meeting to review together. Does this timeline still work?
+* Before starting, it would be great if we could all review the “Tips and Tools for Giving Effective Scientific Oral Presentations” pdf on Canvas so we all are on the same page about what to aim for
+* The presentation is worth 15% so would be great if we could lock in on this and aim to do as well as possible :)
+* Plan for slides (italics indicate expectations from rubric):
+   * Can make title after we figure out key findings from analyses (2 points) → Lucy + Griffin
+      * Title is supported by data presented and/or research direction. Title should reflect a conclusive statement from the overall findings. 
+      * Formatting: May be similar to a more concise title for your manuscript. Should not include acronyms or sound like a proposal title.
+   * Who can do introduction? More work than conclusion (4 points) → Ashleigh
+      * Provides sufficient context for the audience
+      * Emphasizes why the research is important
+      * Address knowledge gap or need that leads into a logical research question or objective
+      * Provides relevant context about the dataset being used (eg. where it was collected, key demographic information, sample sizes if needed, original findings)
+   * Everyone can do results slide for their analysis (data presentation and interpretation) (5 points each) → Each person does their own
+      * Slide titles reflect general findings presented
+      * Figures/tables are properly formatted and appropriate for an oral presentation
+      * Order of findings follow a logical research narrative
+      * Key takeaways/findings are very clear [2pts: clarity and consistency]
+   * Who can do the conclusion/future directions? Less work than the intro (2 points) → Chloe
+      * 1 pt for conclusions that align clearly to the result findings/takeaways
+      * 1 pt for coherent and well thought-out future directions (ideally a mix of short and long-term ideas)
+   * Other things to note:
+      * Consistent formatting of slides
+      * Audience oriented formatting
+      * Narratives of the research was well told and key takeaways were clear
+      * Presented within the 10 minutes
+      * Answers questions effectively
+
+
+
+
+Meeting Notes 
+
+
+All of our results seem to match up (not super significant results)
+* Before going on to oral presentation slides, figure out what figures will be on the paper 
+
+
+* Mention that we only had 12 significant KO terms out of X number of KO terms 
+   * Highlights how there was not significant results 
+
+
+
+
+Figures for final manuscript: 
+Aim 1: FIG 1: diversity– Fig1A Taxonomy bar plot (no stats included), Fig1B alpha, Fig1C beta diversity 
+   * Aren't very many differences
+
+
+Aim 2 results: go into supplementary: 
+* Another section of results– looking at individual taxonomy: 
+* Supplementary table 1 and 2:
+   * Differential abundance and indicator taxa?
+FIGURE 2: Picrust module: Volcano plot!!!! 
+
+
+Aim 3: 
+* Error bar fixed  figure 3
+* Heat map figure 4 
+* PCA supplementary 
+
+
+Aim 4: 
+Figure 5: random forest – 
+* Don't include important scores.
