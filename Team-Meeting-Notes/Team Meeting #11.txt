@@ -1,0 +1,48 @@
+﻿305 Team Meeting #11 Agenda - 3:00PM Monday March 30th, 2026
+
+
+Meeting Objectives:
+* Review presentation slides 
+* First run-through of presentation
+* Manuscript questions 
+
+
+Presentation slides
+* How are they as of now and what can we do to improve them
+* Functional Analysis Questions
+   * When evaluating potential lack of significance within my log2 change bar plot, is it better to highlight the very low relative abundances of some groups, or the small log2 fold changes in some groups
+   * For slide 16, should I try to incorporate the findings of the box plot into the title (something like “non-significant trend by farm-living status”?)
+   * Is it ok if arrows cover KO terms on plots – given that people probably are not going to be reading these?
+
+
+First run-through of presentation
+
+
+Manuscript questions 
+* Discuss manuscript writing division and action items/deadlines for writing 
+
+
+
+
+
+
+Meeting Minutes: 
+* Title is good
+
+
+Slide comments:
+* Title: blue highlight good, “has low predictive value”, make clear that we are talking abt microbiome as predictor for age of disease onset
+* Background: main takeaway as title, “parkinsons disease has been associated w farm living”, good graphic, specific 8.5 million worldwide, not full sentences, truncated with just amin words to understand the context, use animations for one point to show up at a time 
+* Sig. of research: pesticides good, simplify the text, 
+* Knowledge gap: Good phrasing, shorten wording, phrase it more directly, dont need “we aim to investigate” more straightforward
+* Dataset info: shortened, not as much detail
+* Arrange in order that makes sense, dont need the aims, maybe say overview of main question and subquestions, dont need full aim just jump into results, one slide of just aims 
+* Shannon diversity: good title, chang shannon to smth more descriptive, which measures is it actually using, shorten sentences, size of points are small
+* Beta diversity: bray curtis well phrased, just put p value to simplify, 
+* Taxonomic bar plot: change colours, use rainbow, dont talk about the significant one, no title, put with beta diversity 
+* Enriched taxa: put arrows for each way, get rid of first two points to keep simpler, arrange by size, put genus names instead of ASVs, 
+* Indicator taxa: group with differential abundance, not extreme enoguh to be indicator taxa but some differential abundance 
+* KEGG: describe types of pathways, worth looking at clusters separately, not correlated at all w each other, less text 
+* ROC curve: could be cut if looking to cut, didnt worth out for indicator taxa, doesnt rlly add to presentation, 
+* Conclusion: focus more on biological findings, broad microbiome differences werent seen between groups, 
+* Future directions: add one more that is more concrete takeaway that is more specific to our project, (age of onset)
