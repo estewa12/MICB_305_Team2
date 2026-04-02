@@ -1,0 +1,63 @@
+---
+title: "Indicator Taxa Analysis"
+author: "ChloeSaar"
+date: "2026-03-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Indicator Species Analysis
+
+```{r}
+# Indicator species analysis
+
+library(indicspecies)
+
+# Aggregate ASVs to higher taxonomic level (optional), 
+# convert phyloseq to relative abundance, 
+# apply abundance filter.
+
+ps_genus = tax_glom(phyloseq_taxonomy_copy,'Genus')
+ps_relab = microbiome::transform(ps_genus, 'compositional')
+ps_filt = filter_taxa(ps_relab, function(x) mean(x) > 0.001, TRUE)
+otu_table = data.frame(otu_table(ps_filt))
+
+set.seed(421)
+indval = multipatt( t(otu_table), 
+            cluster= sample_data(ps_filt)$Lived_on_farm,
+            func = "r.g",
+ 		  control = how(nperm = 999) )
+
+summary(indval, indvalcomp = TRUE)
+
+# Extract into table
+indval_table = as.data.frame(indval$sign)
+
+# Plot the two taxa that are indicators for the gut
+phyla_to_plot = indval_table %>% 
+  filter(s.Yes==1 ) %>% 
+  arrange(desc(stat)) %>%
+  slice_head(n = 4) %>%
+  rownames()
+
+df_of_taxa = prune_taxa(phyla_to_plot, ps_filt) %>% psmelt()
+
+df_of_taxa %>% 
+  ggplot(aes(Lived_on_farm,Abundance,fill=Lived_on_farm)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(height=0, width=0.2) +
+  facet_wrap(~Genus, ncol = 4, scales = 'free') + scale_fill_manual(values = c("No" = "#898989", "Yes" = "#267bb8")) +
+  labs(x = "Lived on Farm", y = "Relative Abundance") +
+  theme(
+    strip.text = element_text(face = "bold", size = 11),
+    axis.text  = element_text(size = 14),
+    axis.title = element_text(size = 18),
+    legend.text  = element_text(size = 16),
+    legend.title = element_text(size = 18)
+  )
+
+  ggsave("indicator_genera_farm_PD.png", width = 14, height = 5, dpi = 300)
+```
