@@ -103,4 +103,80 @@ ggsave("Top 10 taxa by effect size.tiff", width = 10, height = 6 , dpi = 300)
 
 ```
 
+```{r statistics}
+library(tidyverse)
+library(forcats)
+
+# Use ANCOM-BC results
+statistical_table <- out$res
+
+# Read taxonomy file
+taxonomy_df <- read_tsv("taxonomy.tsv")
+
+# Extract ASV + genus from taxonomy string
+taxonomy_df <- taxonomy_df %>%
+  rename(taxon = `Feature ID`) %>%
+  mutate(
+    Genus = str_split(Taxon, ";"),
+    Genus = sapply(Genus, function(x) {
+      x <- trimws(x)
+      genus_hit <- x[str_detect(x, "D_5__|g__")]
+      if (length(genus_hit) == 0) return(NA_character_)
+      genus_hit[1]
+    }),
+    Genus = str_remove(Genus, "D_5__|g__"),
+    Genus = na_if(Genus, ""),
+    Genus = ifelse(is.na(Genus), "Unclassified", Genus)
+  ) %>%
+  select(taxon, Genus)
+
+# Join taxonomy onto ANCOM-BC results
+taxa_to_plot <- statistical_table %>%
+  left_join(taxonomy_df, by = "taxon") %>%
+  arrange(desc(abs(lfc_Lived_on_farmYes))) %>%
+  slice_head(n = 10) %>%
+  mutate(
+    Genus = ifelse(is.na(Genus), "Unclassified", Genus),
+    Genus_label = make.unique(Genus),
+    Direction = ifelse(lfc_Lived_on_farmYes > 0, "Positive", "Negative"),
+    q_label = paste0("q = ", signif(q_Lived_on_farmYes, 2)),
+    Genus_label = fct_reorder(Genus_label, lfc_Lived_on_farmYes)
+  )
+
+# Plot
+p <- ggplot(taxa_to_plot, aes(x = Genus_label, y = lfc_Lived_on_farmYes, fill = Direction)) +
+  geom_col() +
+  coord_flip() +
+  geom_text(
+    aes(
+      label = q_label,
+      hjust = ifelse(lfc_Lived_on_farmYes > 0, -0.15, 1.15)
+    ),
+    size = 3
+  ) +
+  scale_fill_manual(
+  values = c("Positive" = "#4C72B0", "Negative" = "#DD8452"),
+  labels = c("Positive" = "Enriched in farm",
+             "Negative" = "Enriched in non-farm"),
+  name = "Group"
+) +
+  labs(
+    x = "Genus",
+    y = "Log2 Fold Change",
+    title = "Top 10 taxa by effect size",
+    fill = "Fold change"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right"
+  ) +
+  expand_limits(y = c(min(taxa_to_plot$lfc_Lived_on_farmYes) - 1,
+                      max(taxa_to_plot$lfc_Lived_on_farmYes) + 1)) 
+p
+
+ggsave("Top_10_taxa_by_effect_size_qvalues.tiff", plot = p, width = 10, height = 6, dpi = 300)
+
+
+```
 
