@@ -1,0 +1,146 @@
+---
+title: "Alpha_Analysis_PD"
+output: html_document
+---
+
+```{r libraries, include=FALSE}
+R.version.string
+BiocManager::install("microbiome")
+library(tidyverse)
+library(phyloseq)
+library(vegan)
+library(ggpubr)
+library(microbiome)
+library(indicspecies)
+library(readxl)
+library(writexl)
+library(indicspecies)
+library(dplyr)
+```
+
+## Load the data-- filtering for just patients with PD 
+
+```{r load_data}
+
+#filter for just PD patients 
+
+metadata_unfiltered = read.delim('parkinsons_metadata.txt', row.names = 1) 
+
+metadata <- metadata_unfiltered %>%
+  filter(Disease == "PD")
+
+taxonomy = read.delim('taxonomy.tsv', row.names = 1)
+
+counts = read.delim('feature-table.txt', skip=1, row.names=1)  
+
+```
+
+#  Make a Phyloseq object
+
+
+```{r}
+
+
+# Wrangle Tables
+
+
+taxonomy_formatted = taxonomy %>%
+  separate(col = Taxon,
+           into = c('Domain', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'),
+           sep=';', fill = 'right') %>%
+  select(-Confidence) %>%
+  as.matrix()
+
+counts_formatted = counts %>% as.matrix()
+
+#Extract Column Names
+meta_names = read.delim ('parkinsons_metadata.txt', row.names = 1) %>% names ()
+
+#Extract Data
+meta_data = read.delim ('parkinsons_metadata.txt', row.names = 1, skip = 1, header = F)
+
+# Just checking to make sure the lines match up from the original data
+table(metadata [1,] == metadata [1,])
+
+# all 85 were true!
+
+#now setting column names for metadata
+names (meta_data) = meta_names
+
+#Finally putting it all together to create the phyloseq object
+ps = phyloseq(sample_data(metadata),
+              otu_table(counts_formatted, taxa_are_rows = T),
+              tax_table(taxonomy_formatted))
+# Lastly I am saving it so that I can refer to it later
+saveRDS(ps, 'phyloseq_taxonomy.rds')
+```
+
+
+## Calculating Shannon Alpha Diversity 
+
+```{r part 2}
+
+
+hist(sample_sums(ps))
+
+#using a sampling depth of 5103 as seen in literature
+
+psrare = ps %>% rarefy_even_depth(sample.size = 5103, rngseed = 123)
+# showing that all samples have a sampling depth of 5500
+table(sample_sums(psrare))
+
+# Calculate the Shannon alpha diversity using the variable Lived_on_farm
+set.seed(123)
+shannon = plot_richness(psrare, x = 'Lived_on_farm', measures = c('Shannon'))
+
+p = plot_richness(psrare, x = 'Lived_on_farm', 
+                  measures = c('Shannon'),
+                  color = 'Lived_on_farm',
+                  )
+p 
+
+
+
+# pulling the Shannon alpha diversity values from the plot 
+pdata = p$data
+
+# Generating an appropriate publication-ready plot
+
+p_formatted = pdata %>% ggplot(aes(Lived_on_farm,value,fill = Lived_on_farm)) +
+ geom_boxplot(outlier.shape = NA) + 
+    geom_jitter(height=0,width=.25) +
+    theme_classic(base_size=6) +
+  facet_wrap(~variable,ncol=4,scales = 'free_y') +
+  ylab('Shannon Alpha Diversity') + xlab('Lived on Farm') +
+  theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1,size = 14), 
+  axis.text.y  = element_text(size = 14),
+  axis.title   = element_text(size = 16),
+  strip.text   = element_text(size = 16),  
+  legend.title = element_text(size = 14),
+  legend.text  = element_text(size = 12)
+) +
+    scale_fill_manual(values = c("#0072B2", "#D55E00"))
+  labs(fill='Lived on Farm') 
+  p_formatted
+
+# Adding a Wilcoxon test 
+
+comparisons <- list(c("Yes", "No"))
+
+p_final <- p_formatted +
+  stat_compare_means(comparisons = comparisons, method = "wilcox.test", size = 6) +
+  scale_y_continuous(expand = expansion(mult = c(0, .1)))
+
+
+p_final 
+ggsave(
+  "Shannon_farm_comparison.png",
+  plot = p_final,
+  width = 12,
+  height = 6,
+  dpi = 300
+)
+```
+
+```
+
