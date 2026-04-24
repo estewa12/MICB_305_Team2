@@ -14,15 +14,18 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 # Indicator species analysis
 
+# Loading libraries
 library(indicspecies)
 
-# Aggregate ASVs to higher taxonomic level (optional), 
-# convert phyloseq to relative abundance, 
-# apply abundance filter.
+# Loading in phyloseq object and aggregating ASVs to genus level
+ps = readRDS("phyloseq_taxonomy.rds")
+ps_genus = tax_glom(ps, "Genus")
 
-ps_genus = tax_glom(phyloseq_taxonomy_copy,'Genus')
+# Converting phyloseq to relative abundance
 ps_relab = microbiome::transform(ps_genus, 'compositional')
 ps_filt = filter_taxa(ps_relab, function(x) mean(x) > 0.001, TRUE)
+
+# Applying abundance filter
 otu_table = data.frame(otu_table(ps_filt))
 
 set.seed(421)
@@ -36,7 +39,7 @@ summary(indval, indvalcomp = TRUE)
 # Extract into table
 indval_table = as.data.frame(indval$sign)
 
-# Plot the two taxa that are indicators for the gut
+# Select the four taxa that are most indicative of farm-living (by stat value)
 phyla_to_plot = indval_table %>% 
   filter(s.Yes==1 ) %>% 
   arrange(desc(stat)) %>%
@@ -45,6 +48,7 @@ phyla_to_plot = indval_table %>%
 
 df_of_taxa = prune_taxa(phyla_to_plot, ps_filt) %>% psmelt()
 
+# Plotting the four taxa that are most indicative fo farm-living (by stat value)
 df_of_taxa %>% 
   ggplot(aes(Lived_on_farm,Abundance,fill=Lived_on_farm)) +
   geom_boxplot(outlier.shape = NA) +
@@ -59,5 +63,6 @@ df_of_taxa %>%
     legend.title = element_text(size = 18)
   )
 
-  ggsave("indicator_genera_farm_PD.png", width = 14, height = 5, dpi = 300)
+# Saving plot
+  # ggsave("indicator_genera_farm_PD.png", width = 14, height = 5, dpi = 300)
 ```
