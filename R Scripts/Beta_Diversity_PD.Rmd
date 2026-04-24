@@ -5,6 +5,7 @@ date: "2026-04-15"
 ---
 
 ```{r libraries, include=FALSE}
+
 library(tidyverse)
 library(phyloseq)
 library(vegan)
@@ -12,7 +13,8 @@ library(ggpubr)
 library(microbiome)
 library(indicspecies)
 library(writexl)
-library(ANCOMBC)
+library(tibble)
+library(ggplot2)
 ```
 
 ## Load the data
@@ -24,7 +26,7 @@ taxonomy = read.delim('taxonomy.tsv', row.names = 1)
 counts = read.delim('feature-table.txt', skip=1, row.names=1)  
 ```
 
-# PART 1: Make a Phyloseq object
+# Beta Diversity Analysis
 
 ```{r}
 
@@ -46,9 +48,6 @@ meta_names <- read.delim('parkinsons_metadata.txt', row.names = 1) %>% names()
 
 # Extract Data
 meta_data <- read.delim('parkinsons_metadata.txt', row.names = 1, skip = 1, header = F)
-
-# Ensure all values in the first row of real data are identical
-table(metadata[1,] == meta_data[1,])
 
 # Set column names for metadata
 names(meta_data) = meta_names
@@ -74,16 +73,13 @@ hist(sample_sums(ps_PD))
 rarecurve(t(data.frame(ps@otu_table)),
           step = 500)
 
-# Rarefy
+# Rarefying phyloseq object
 set.seed(13)
 psrare <- rarefy_even_depth(ps_PD, sample.size = 5103, rngseed = 13)
 
 table(sample_sums(psrare))
 
 ps_bray <- phyloseq::distance(psrare, method = "bray")
-
-library(vegan)
-library(tibble)
 
 mds <- metaMDS(ps_bray)
 
@@ -98,27 +94,26 @@ metadata <- sample_data(psrare) %>%
 
 mds_data <- merge(mds_data, metadata, by = "SampleID")
 
-library(ggplot2)
-
+# Generating beta diversity ordination 
 beta_plot <- ggplot(mds_data,
                     aes(x = MDS1, y = MDS2,
                         colour = Lived_on_farm)) +
-  geom_point(size = 3, alpha = 0.8) +
+  geom_point(size = 3, alpha = 0.9) +
   stat_ellipse(type = "t") +
-  theme_classic(base_size = 14) +
+  theme_classic(base_size = 20) +
   labs(colour = "Lived on Farm") +
+    scale_colour_manual(values = c("No" = "darkgrey", "Yes" = "steelblue")) +
   theme(plot.title = element_text(hjust = 0.5))
 beta_plot
 
-ggsave(filename = "beta_plot.png", plot = beta_plot, width = 6, height = 4)
+# ggsave(filename = "beta_plot.png", plot = beta_plot, width = 7, height = 4)
 
+# PERMANOVA testing 
 stats_univar <- adonis2(ps_bray ~ Lived_on_farm,
                         data = metadata,
                         permutations = 999)
-print(stats_univar)
+stats_univar
 
 ```
 
-```{r}
-
-
+\`\`\`{r}
