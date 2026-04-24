@@ -9,12 +9,16 @@ output: html_document
 #Stacked Bar Plot 
 # Genus-level Stacked Bar Plot per Sample, Faceted by Farm Status
 
+# Loading in libraries
 library(phyloseq)
 library(ggplot2)
 library(dplyr)
 
+ps <- readRDS("phyloseq_taxonomy.rds")
+phyloseq_taxonomy_copy = as.data.frame(tax_table(ps))
+
 # Aggregate to Genus level & transform to relative abundance
-ps_genus <- tax_glom(phyloseq_taxonomy_copy, taxrank = "Genus")
+ps_genus <- tax_glom(ps, taxrank = "Genus")
 ps_rel   <- transform_sample_counts(ps_genus, function(x) x / sum(x))
 
 # Melt and clean
@@ -43,7 +47,7 @@ genus_order <- ps_melt %>%
 genus_order <- c("Other", genus_order[genus_order != "Other"])
 ps_melt$Genus <- factor(ps_melt$Genus, levels = genus_order)
 
-# Define colours
+# Define colours for taxonomic bar plot
 n_genera <- length(levels(ps_melt$Genus))
 
 genus_colors <- setNames(
@@ -60,7 +64,6 @@ p_stacked <- ggplot(ps_melt,
   scale_y_continuous(expand = c(0, 0),
                      labels = scales::percent_format(accuracy = 1)) +
   labs(
-    title    = "Genus-Level Gut Microbiome Composition in PD Patients",
     x        = "SampleID",
     y        = "Relative Abundance"
   ) +
@@ -78,15 +81,10 @@ p_stacked <- ggplot(ps_melt,
     panel.spacing   = unit(0.3, "cm")
   )
 
-print(p_stacked)
+p_stacked
 
-# Save
-ggsave("genus_stacked_barplot_per_sample.pdf", plot = p_stacked,
-       width = 18, height = 7, units = "in", dpi = 300)
-
-ggsave("genus_stacked_barplot_per_sample.png", plot = p_stacked,
-       width = 18, height = 7, units = "in", dpi = 300)
-
-message("Stacked plot saved.")
+# Save plot
+# ggsave("genus_stacked_barplot_per_sample.pdf", plot = p_stacked,
+#        width = 18, height = 7, units = "in", dpi = 300)
+# 
 ```
-
