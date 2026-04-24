@@ -4,8 +4,8 @@ output: html_document
 ---
 
 ```{r libraries, include=FALSE}
-R.version.string
-BiocManager::install("microbiome")
+
+# Loading Packages
 library(tidyverse)
 library(phyloseq)
 library(vegan)
@@ -17,15 +17,21 @@ library(writexl)
 library(indicspecies)
 library(dplyr)
 
+#### Loading and tidying data
+
+# Loading and filtering metadata
 metadata_unfiltered = read.delim('parkinsons_metadata.txt', row.names = 1) 
 
 metadata <- metadata_unfiltered %>%
   filter(Disease == "PD")
 
+# Loading taxonomy table
 taxonomy = read.delim('taxonomy.tsv', row.names = 1)
 
+# Loading feature table
 counts = read.delim('feature-table.txt', skip=1, row.names=1)  
 
+# Tidying taxonomy table
 taxonomy_formatted = taxonomy %>%
   separate(col = Taxon,
            into = c('Domain', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'),
@@ -35,69 +41,63 @@ taxonomy_formatted = taxonomy %>%
 
 counts_formatted = counts %>% as.matrix()
 
-meta_names = read.delim ('parkinsons_metadata.txt', row.names = 1) %>% names ()
-
-meta_data = read.delim ('parkinsons_metadata.txt', row.names = 1, skip = 1, header = F)
-
-table(metadata [1,] == metadata [1,])
-
-names (meta_data) = meta_names
-
+# Creating phyloseq object
 ps = phyloseq(sample_data(metadata),
               otu_table(counts_formatted, taxa_are_rows = T),
               tax_table(taxonomy_formatted))
 
+# Saving phyloseq object to be used in all downstream analyses
 saveRDS(ps, 'phyloseq_taxonomy.rds')
 
-hist(sample_sums(ps))
+# Setting seed for reproducibility
+set.seed(123)
 
+# Rarefying based on depth from alpha rarefaction curve
 psrare = ps %>% rarefy_even_depth(sample.size = 5103, rngseed = 123)
 
-table(sample_sums(psrare))
-
-set.seed(123)
+#### Shannon alpha diversity analysis
+# Measuring Shannon alpha diversity based on farm-living status
 shannon = plot_richness(psrare, x = 'Lived_on_farm', measures = c('Shannon'))
 
+# Plotting Shannon alpha diversity (basic plot)
 p = plot_richness(psrare, x = 'Lived_on_farm', 
                   measures = c('Shannon'),
                   color = 'Lived_on_farm',
-                  )
-p 
+                  theme(plot.title = element_blank()))
 
 
+# Adding the p-values from the Shannon alpha diversity analysis to the data 
 pdata = p$data
 
 
+# Generating formatted alpha diversity plot
 p_formatted = pdata %>% ggplot(aes(Lived_on_farm,value,fill = Lived_on_farm)) +
  geom_boxplot(outlier.shape = NA) + 
-    geom_jitter(width = 0.15, size = 1.5)+
+    geom_jitter(width = 0.15, size = 2, alpha = 0.5)+
     theme_classic(base_size=6) +
   facet_wrap(~variable,ncol=4,scales = 'free_y') +
  
   labs(
     x = "Lived on Farm",
     y = "Shannon Alpha Diversity",
-    fill = "Lived on Farm"   # changes legend title
-  ) +
-  
-  theme(axis.text.x = element_text(angle = 45,vjust=1,hjust=1,size = 14), 
-  axis.text.y  = element_text(size = 14),
-  axis.title   = element_text(size = 16),
-  strip.text   = element_text(size = 16),  
-  legend.title = element_text(size = 14),
-  legend.text  = element_text(size = 12)
-) +
-    scale_fill_manual(values = c("#0072B2", "#D55E00"))
+    fill = "Lived on Farm") +
+  theme_classic(base_size = 20) +
+  scale_fill_manual(values = c("darkgrey", "steelblue"))+
+  theme(
+  plot.title = element_blank(),
+  strip.background = element_blank(),
+  strip.text = element_blank()
+)
 
-    
-  p_formatted
-
+# Adding statistical test to Shannon alpha diversity plot
 comparisons <- list(c("Yes", "No"))
 
 p_final <- p_formatted +
   stat_compare_means(comparisons = comparisons, method = "wilcox.test", size = 6) +
   scale_y_continuous(expand = expansion(mult = c(0, .1)))
-```
 
+p_final
+
+# ggsave("alpha_plot.png", plot = p_final, width = 9, height = 4, dpi = 300)
 ```
 
