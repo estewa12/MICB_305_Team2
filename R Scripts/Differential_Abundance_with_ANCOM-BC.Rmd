@@ -2,7 +2,10 @@
 title: "Differential_Abundance_with_ANCOM-BC"
 output: html_document
 ---
+
 ```{r}
+
+# Loading in libraries
 library(tidyverse)
 library(phyloseq)
 library(ANCOMBC)
@@ -13,10 +16,16 @@ library(forcats)
 library(readr)
 library(stringr)
 
+# Reading in phyloseq object from alpha diversity analysis
 ps = readRDS('phyloseq_taxonomy.rds')
 
+# Reading in taxonomy table
+taxonomy_df <- read_tsv("taxonomy.tsv")
+
+# Agglomerating ASVs to genus level 
 ps_genus = tax_glom(ps, "Genus")
 
+# ANCOMBC2 analysis at the genus level
 set.seed(421)
 out = ancombc2(data = ps_genus, 
                fix_formula = 'Lived_on_farm', 
@@ -29,18 +38,13 @@ statistical_table = out$res
 taxa_to_plot = statistical_table %>%
   filter(diff_robust_Lived_on_farmYes)
 
+# Plotting bar chart of log fold-change values for significant taxa identified
 taxa_to_plot %>%
   ggplot(aes(x = taxon, y = lfc_Lived_on_farmYes)) +
   geom_col() +
   coord_flip()
 
-
-writexl::write_xlsx(statistical_table,'ANCOMBC Results.xlsx')
-
-statistical_table <- out$res
-
-taxonomy_df <- read_tsv("taxonomy.tsv")
-
+# Tidying the taxonomy table 
 taxonomy_df <- taxonomy_df %>%
   rename(taxon = `Feature ID`) %>%
   mutate(
@@ -57,6 +61,7 @@ taxonomy_df <- taxonomy_df %>%
   ) %>%
   select(taxon, Genus)
 
+# Selecting taxa to plot - top 10 taxa with the lowest p-value (first 10 rows of arranged taxonomy data frame)
 taxa_to_plot <- statistical_table %>%
   left_join(taxonomy_df, by = "taxon") %>%
   arrange(desc(abs(lfc_Lived_on_farmYes))) %>%
@@ -68,6 +73,7 @@ taxa_to_plot <- statistical_table %>%
     Genus_label = fct_reorder(Genus_label, lfc_Lived_on_farmYes)
   )
 
+# Plotting top 10 taxa by effect size
 p <- ggplot(taxa_to_plot, aes(x = Genus_label, y = lfc_Lived_on_farmYes, fill = Direction)) +
   geom_col() +
   coord_flip() +
@@ -80,7 +86,6 @@ p <- ggplot(taxa_to_plot, aes(x = Genus_label, y = lfc_Lived_on_farmYes, fill = 
   labs(
     x = "Genus",
     y = "Log2 Fold Change",
-    title = "Top 10 Taxa by Effect Size",
     fill = "Fold change"
   ) +
   theme_classic() +
@@ -92,11 +97,6 @@ p <- ggplot(taxa_to_plot, aes(x = Genus_label, y = lfc_Lived_on_farmYes, fill = 
                       max(taxa_to_plot$lfc_Lived_on_farmYes) + 1)) 
 p
 
-ggsave("Differential_Abundance_Plot.png",
-       plot = p,
-       width = 10,
-       height = 6,
-       dpi = 300)
+# ggsave("Differential_Abundance_Plot.png", plot = p, width = 10,height = 6, dpi = 300)
 
 ```
-
