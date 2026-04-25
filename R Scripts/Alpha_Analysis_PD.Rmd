@@ -47,6 +47,8 @@ ps = phyloseq(sample_data(metadata),
               tax_table(taxonomy_formatted))
 
 # Saving phyloseq object to be used in all downstream analyses
+# Note -  phyloseq objects were generated for both alpha and beta diversity analyses
+# This is the phyloseq object used in all downstream analyses  
 saveRDS(ps, 'phyloseq_taxonomy.rds')
 
 # Setting seed for reproducibility
@@ -100,4 +102,3 @@ p_final
 
 # ggsave("alpha_plot.png", plot = p_final, width = 9, height = 4, dpi = 300)
 ```
-

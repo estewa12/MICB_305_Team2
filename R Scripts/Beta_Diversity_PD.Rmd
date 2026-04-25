@@ -53,6 +53,7 @@ meta_data <- read.delim('parkinsons_metadata.txt', row.names = 1, skip = 1, head
 names(meta_data) = meta_names
 
 # Creating the phyloseq object
+# Note - phyloseq object is also created for alpha diversity analysis - this is highly similar, with minor differences. All downstream analyses use the alpha diversity phyloseq object! 
 ps = phyloseq(sample_data(meta_data),
                otu_table(counts_formatted, taxa_are_rows = T),
                tax_table(taxonomy_formatted))
@@ -62,9 +63,6 @@ ps_PD <- subset_samples(ps, Disease == "PD")
 
 # Remove taxa that are now zero after subsetting
 ps_PD <- prune_taxa(taxa_sums(ps_PD) > 0, ps_PD)
-
-# Saving phyloseq object for later reference if needed
-saveRDS(ps_PD, 'phyloseq_taxonomy.rds')
 
 # Visualize sequencing depth
 hist(sample_sums(ps_PD))

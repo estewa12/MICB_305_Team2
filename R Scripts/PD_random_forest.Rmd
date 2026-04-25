@@ -157,13 +157,13 @@ plot_roc <- ggplot() +
   ) +
   theme_minimal(base_size = 20)
 
-ggsave(
-  filename = "roc_curve.png",
-  plot = plot_roc,
-  width = 8,
-  height = 6,
-  dpi = 300
-)
+# ggsave(
+#   filename = "roc_curve.png",
+#   plot = plot_roc,
+#   width = 8,
+#   height = 6,
+#   dpi = 300
+# )
 ```
 Next, compile the results into a table
 ```{r results table}
@@ -205,12 +205,12 @@ plot_importance <- pd_model$importance %>%
   ylab("Importance (Gini)") +
   xlab(NULL)
 
-ggsave(
-  filename = "importance_plot.png",
-  plot = plot_importance,
-  width = 10,
-  height = 7,
-  dpi = 300
-)
+# ggsave(
+#   filename = "importance_plot.png",
+#   plot = plot_importance,
+#   width = 10,
+#   height = 7,
+#   dpi = 300
+# )
 ```
 
