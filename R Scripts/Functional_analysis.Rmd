@@ -370,10 +370,13 @@ daa_results_df = pathway_daa(abundance = ko,
                              daa_method = "DESeq2", 
                              select = NULL, reference = NULL)
 
+# Filtering this table to only keep results with significant adjusted p values ([ < 0.05])
+daa_results_df_filtered <- daa_results_df %>%
+  filter(p_adjust <= 0.05)
 
 # Annotate pathway results using KO to KEGG conversion
 daa_annotated_results_df = pathway_annotation(pathway = "KO",
-                                              daa_results_df = daa_results_df,
+                                              daa_results_df = daa_results_df_filtered,
                                               ko_to_kegg = TRUE)
 
 ```
@@ -423,9 +426,9 @@ peb
 
 ```{r identical features}
 
-# Filtering for p value and log2 fold change
+# Filtering for p value
 sig_features = daa_annotated_results_df %>% 
-  filter(p_adjust <= 0.05, abs(log2_fold_change) > 0.5) %>% 
+  filter(p_adjust <= 0.05) %>% 
   pull('feature') %>% unique()
 
 ko_relab = read.delim('pred_metagenome_unstrat.tsv',row.names = 1) %>% 
@@ -550,20 +553,7 @@ cor.test(red_sum, blue_sum, method = "spearman")
 
 ```
 
-##### PCA Plot to see how similar farm-living vs non-farm-living groups are
-
-```{r PCA}
-
-# Generate pathway PCA plot
-pca_plot <- pathway_pca(abundance = ko,
-            metadata = meta, 
-            group = "Lived_on_farm")
-
-pca_plot
-
-# Saving the PCA plot 
-# ggsave("pca_deseq2.png",
-#        plot = pca_plot, width = 20, height = 14)
+```         
 ```
 
 ## Functional Analysis with Metacyc Pathways
@@ -611,41 +601,25 @@ peb_metacyc
 #        plot = peb_metacyc, width = 22, height = 10)
 ```
 
-##### Making heat map to evaluate which features are highly correlated (essentially the same)
+##### Making heat map to evaluate which features are highly correlated cannot be made for MetaCyc because there is only one significant pathway
 
 ```{r metacyc heat map}
 
 # Filtering adjusted p-value 
-metacyc_sig_features = daa_annotated_results_metacyc_df %>% 
-  filter(p_adjust <= 0.05, abs(log2_fold_change) > 0) %>% 
-  pull('feature') %>% unique()
-
-metacyc_relab = read.delim('path_abun_unstrat.tsv',row.names = 1) %>% 
-  apply(2,function(x) x/sum(x)) %>% as.data.frame()
-colSums(metacyc_relab) # Should all be 1
-
-# Spearman test between every feature pair
-stats = metacyc_relab %>% t() %>%  
-  as.data.frame() %>% 
-  select(all_of(metacyc_sig_features)) %>% 
-  cor(method = 'spearman') 
+# metacyc_sig_features = daa_annotated_results_metacyc_df %>% 
+#   filter(p_adjust <= 0.05, abs(log2_fold_change) > 0) %>% 
+#   pull('feature') %>% unique()
+# 
+# metacyc_relab = read.delim('path_abun_unstrat.tsv',row.names = 1) %>% 
+#   apply(2,function(x) x/sum(x)) %>% as.data.frame()
+# colSums(metacyc_relab) # Should all be 1
+# 
+# # Spearman test between every feature pair
+# stats = metacyc_relab %>% t() %>%  
+#   as.data.frame() %>% 
+#   select(all_of(metacyc_sig_features)) %>% 
+#   cor(method = 'spearman') 
 
 
 # Cannot create heatmap, as there is only one significant metacyc pathway
-```
-
-##### PCA Plot to see how similar farm-living vs non-farm-living groups are
-
-```{r metacyc pca plot}
-
-# Generate pathway PCA plot
-pca_metacyc_plot <- pathway_pca(abundance = metacyc,
-            metadata = meta, 
-            group = "Lived_on_farm")
-
-pca_metacyc_plot
-
-# Saving metacyc pathways PCA plot 
-# ggsave("pca_deseq2_metacyc.png",
-#        plot = pca_metacyc_plot, width = 20, height = 14)
 ```
